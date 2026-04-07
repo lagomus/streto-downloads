@@ -100,6 +100,14 @@ const I18N = {
 const PLATFORM_ORDER = ["Windows", "macOS", "Linux", "Android", "iOS"];
 const ARCH_ORDER = ["x64", "arm64"];
 
+const PACKAGE_PRIORITY = {
+  Windows: { Setup: 5, Portable: 1 },
+  macOS: { DMG: 4, PKG: 3, ZIP: 2 },
+  Linux: { AppImage: 4, DEB: 3, RPM: 2, SNAP: 1 },
+  Android: { APK: 3, AAB: 2 },
+  iOS: { IPA: 3 },
+};
+
 let cachedReleases = [];
 
 function debugLog(message) {
@@ -357,32 +365,72 @@ function selectLatest(releases) {
   return releases.find(passReleaseFilter) || releases[0] || null;
 }
 
-function renderLatest(release) {
+function packageScore(cls) {
+  return PACKAGE_PRIORITY?.[cls.platform]?.[cls.packageType] || 0;
+}
+
+function collectLatestAssets(releases) {
+  const chosen = new Map();
+
+  releases.forEach((release, releaseIndex) => {
+    if (!passReleaseFilter(release)) {
+      return;
+    }
+
+    for (const asset of release.assets || []) {
+      if (!passAssetFilter(asset)) {
+        continue;
+      }
+
+      const cls = classifyAsset(asset.name);
+      if (!cls) {
+        continue;
+      }
+
+      const key = `${cls.platform}:${cls.arch}`;
+      const candidate = {
+        asset,
+        cls,
+        releaseTag: release.tag_name,
+        releaseIndex,
+        score: packageScore(cls),
+      };
+
+      const current = chosen.get(key);
+      if (!current) {
+        chosen.set(key, candidate);
+        continue;
+      }
+
+      if (candidate.score > current.score) {
+        chosen.set(key, candidate);
+        continue;
+      }
+
+      if (candidate.score === current.score && candidate.releaseIndex < current.releaseIndex) {
+        chosen.set(key, candidate);
+      }
+    }
+  });
+
+  return chosen;
+}
+
+function renderLatest(releases) {
   latestGrid.innerHTML = "";
 
-  const grouped = new Map();
-  for (const asset of (release.assets || []).filter(passAssetFilter)) {
-    const cls = classifyAsset(asset.name);
-    if (!cls) {
-      continue;
-    }
-
-    const key = `${cls.platform}:${cls.arch}:${cls.packageType}`;
-    if (!grouped.has(key)) {
-      grouped.set(key, asset);
-    }
-  }
+  const grouped = collectLatestAssets(releases);
 
   const preferred = preferredArch();
   for (const platform of PLATFORM_ORDER) {
     for (const arch of ARCH_ORDER) {
       const key = `${platform}:${arch}`;
-      const asset = grouped.get(key);
-      if (!asset) {
+      const entry = grouped.get(key);
+      if (!entry) {
         continue;
       }
 
-      const card = createAssetCard(asset, release.tag_name);
+      const card = createAssetCard(entry.asset, entry.releaseTag);
       if (arch === preferred) {
         card.style.borderColor = "rgba(52, 211, 153, 0.75)";
       }
@@ -467,7 +515,7 @@ function rerender() {
     prettyDate(latest.published_at || latest.created_at),
   );
 
-  renderLatest(latest);
+  renderLatest(cachedReleases);
   renderAll(cachedReleases);
 }
 
