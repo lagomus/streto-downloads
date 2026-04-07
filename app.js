@@ -1,5 +1,6 @@
 const API_URLS = [
   "https://api.github.com/repos/lagomus/streto-downloads/releases",
+  "https://api.github.com/repos/lagomus/streto-pos/releases",
   "https://api.github.com/repos/streto/streto-downloads/releases",
 ];
 
@@ -453,9 +454,13 @@ async function loadReleases() {
       }
 
       releases = await res.json();
-      if (Array.isArray(releases)) {
+      if (Array.isArray(releases) && releases.length > 0) {
         debugLog(`Loaded releases from ${url}. Count: ${releases.length}`);
         break;
+      }
+
+      if (Array.isArray(releases) && releases.length === 0) {
+        debugLog(`Endpoint returned 0 releases, trying next source`);
       }
     }
 
