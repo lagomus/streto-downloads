@@ -80,25 +80,14 @@ footer {
 .brand-wrap {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
+  min-width: 0;
 }
 
-.brand-mark {
-  width: 54px;
-  height: 54px;
+.brand-logo {
+  width: min(300px, 58vw);
+  height: auto;
   display: block;
-}
-
-.brand-word {
-  font-family: "Sora", sans-serif;
-  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  color: #0a557c;
-}
-
-.brand-word span {
-  color: #46d6bf;
+  max-width: 100%;
 }
 
 .lang-switch {
@@ -219,6 +208,13 @@ main {
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
+}
+
+.asset-chips {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .asset-head h3 {

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" role="img" aria-labelledby="title">
+  <title id="title">Streto mark</title>
+  <g fill="none" fill-rule="evenodd" transform="translate(7 9)">
+    <rect x="0" y="30" width="92" height="22" rx="11" transform="rotate(30 46 41)" stroke="#0A557C" stroke-width="8"/>
+    <rect x="34" y="10" width="92" height="22" rx="11" transform="rotate(30 80 21)" fill="#46D6BF"/>
+    <rect x="0" y="78" width="92" height="22" rx="11" transform="rotate(30 46 89)" fill="#46D6BF"/>
+    <rect x="34" y="58" width="92" height="22" rx="11" transform="rotate(30 80 69)" stroke="#0A557C" stroke-width="8"/>
+  </g>
+</svg>

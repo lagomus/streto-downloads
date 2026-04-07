@@ -245,12 +245,43 @@ function classifyAsset(assetName) {
     return null;
   }
 
+  let packageType = "Package";
+  if (platform === "Windows") {
+    if (n.includes("setup") || n.includes("installer") || n.includes("nsis")) {
+      packageType = "Setup";
+    } else {
+      packageType = "Portable";
+    }
+  } else if (platform === "macOS") {
+    if (n.endsWith(".dmg")) {
+      packageType = "DMG";
+    } else if (n.endsWith(".pkg")) {
+      packageType = "PKG";
+    } else if (n.endsWith(".zip")) {
+      packageType = "ZIP";
+    }
+  } else if (platform === "Linux") {
+    if (n.endsWith(".appimage")) {
+      packageType = "AppImage";
+    } else if (n.endsWith(".deb")) {
+      packageType = "DEB";
+    } else if (n.endsWith(".rpm")) {
+      packageType = "RPM";
+    } else if (n.endsWith(".snap")) {
+      packageType = "SNAP";
+    }
+  } else if (platform === "Android") {
+    packageType = n.endsWith(".aab") ? "AAB" : "APK";
+  } else if (platform === "iOS") {
+    packageType = "IPA";
+  }
+
   const arch =
     n.includes("arm64") || n.includes("aarch64") || n.includes("armv8")
       ? "arm64"
       : "x64";
 
-  return { platform, arch };
+  return { platform, arch, packageType };
 }
 
 function prettyDate(isoDate) {
@@ -277,12 +308,14 @@ function createAssetCard(asset, releaseTag) {
   const card = cardTemplate.content.firstElementChild.cloneNode(true);
   const cls = classifyAsset(asset.name);
   const titleEl = card.querySelector("h3");
-  const chipEl = card.querySelector(".chip");
+  const kindEl = card.querySelector(".asset-kind");
+  const releaseEl = card.querySelector(".asset-release");
   const fileEl = card.querySelector(".asset-file");
   const linkEl = card.querySelector(".download-btn");
 
-  titleEl.textContent = `${cls.platform} ${cls.arch}`;
-  chipEl.textContent = releaseTag;
+  titleEl.textContent = `${cls.platform} ${cls.arch} ${cls.packageType}`;
+  kindEl.textContent = cls.packageType;
+  releaseEl.textContent = releaseTag;
   fileEl.textContent = asset.name;
   linkEl.href = asset.browser_download_url;
   linkEl.textContent = T.download;
@@ -334,7 +367,7 @@ function renderLatest(release) {
       continue;
     }
 
-    const key = `${cls.platform}:${cls.arch}`;
+    const key = `${cls.platform}:${cls.arch}:${cls.packageType}`;
     if (!grouped.has(key)) {
       grouped.set(key, asset);
     }
