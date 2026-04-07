@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 190" role="img" aria-labelledby="title desc">
+  <title id="title">Streto logo</title>
+  <desc id="desc">Streto wordmark with stylized S symbol.</desc>
+  <g fill="none" fill-rule="evenodd">
+    <g transform="translate(12 14)">
+      <rect x="0" y="38" width="92" height="22" rx="11" transform="rotate(30 46 49)" stroke="#0A557C" stroke-width="8"/>
+      <rect x="34" y="18" width="92" height="22" rx="11" transform="rotate(30 80 29)" fill="#46D6BF"/>
+      <rect x="0" y="86" width="92" height="22" rx="11" transform="rotate(30 46 97)" fill="#46D6BF"/>
+      <rect x="34" y="66" width="92" height="22" rx="11" transform="rotate(30 80 77)" stroke="#0A557C" stroke-width="8"/>
+    </g>
+    <g fill="#0A557C" font-family="Sora, Arial, sans-serif" font-weight="600" transform="translate(170 34)">
+      <text font-size="92" letter-spacing="-2">streto</text>
+      <text x="307" y="72" font-size="92" letter-spacing="-2">io</text>
+    </g>
+    <circle cx="492" cy="114" r="9" fill="#46D6BF"/>
+  </g>
+</svg>

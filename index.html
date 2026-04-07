@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Official Streto desktop downloads for Windows and macOS."
+      content="Official Streto desktop downloads for Windows, macOS, Linux, Android, and iOS."
     />
-    <title>Streto Downloads</title>
+    <title id="pageTitle">Streto Downloads</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,9 +21,16 @@
     <div class="ambient ambient-b" aria-hidden="true"></div>
 
     <header class="hero">
-      <p class="badge">Official Distribution</p>
-      <h1>Streto Desktop Downloads</h1>
-      <p class="lead">
+      <div class="hero-top">
+        <img class="brand-logo" src="./streto-logo.svg" alt="Streto logo" />
+        <div class="lang-switch" role="group" aria-label="Language">
+          <button id="langEn" type="button" class="lang-btn">EN</button>
+          <button id="langEs" type="button" class="lang-btn">ES</button>
+        </div>
+      </div>
+      <p class="badge" id="badgeText">Official Distribution</p>
+      <h1 id="heroTitle">Streto Desktop Downloads</h1>
+      <p class="lead" id="heroLead">
         Fast access to the latest signed installers for Windows and macOS,
         grouped by architecture.
       </p>
@@ -33,7 +40,7 @@
     <main>
       <section class="panel">
         <div class="panel-head">
-          <h2>Latest Release</h2>
+          <h2 id="latestHeading">Latest Release</h2>
           <a class="subtle-link" id="latestReleaseLink" href="#" target="_blank" rel="noopener noreferrer">Open release notes</a>
         </div>
         <div id="latestGrid" class="grid"></div>
@@ -41,34 +48,34 @@
 
       <section class="panel">
         <div class="panel-head">
-          <h2>All Releases</h2>
+          <h2 id="allHeading">All Releases</h2>
         </div>
         <div class="filters" aria-label="Release filters">
-          <label>
-            Release type
+          <label for="releaseTypeFilter">
+            <span id="releaseTypeLabel">Release type</span>
             <select id="releaseTypeFilter">
-              <option value="all">All</option>
-              <option value="stable">Stable</option>
-              <option value="pre">Pre-release</option>
+              <option value="all" id="releaseTypeAll">All</option>
+              <option value="stable" id="releaseTypeStable">Stable</option>
+              <option value="pre" id="releaseTypePre">Pre-release</option>
             </select>
           </label>
 
-          <label>
-            Platform
+          <label for="platformFilter">
+            <span id="platformLabel">Platform</span>
             <select id="platformFilter">
-              <option value="all">All</option>
-              <option value="Windows">Windows</option>
-              <option value="macOS">macOS</option>
-              <option value="Linux">Linux</option>
-              <option value="Android">Android</option>
-              <option value="iOS">iOS</option>
+              <option value="all" id="platformAll">All</option>
+              <option value="Windows" id="platformWindows">Windows</option>
+              <option value="macOS" id="platformMac">macOS</option>
+              <option value="Linux" id="platformLinux">Linux</option>
+              <option value="Android" id="platformAndroid">Android</option>
+              <option value="iOS" id="platformIos">iOS</option>
             </select>
           </label>
 
-          <label>
-            Architecture
+          <label for="archFilter">
+            <span id="archLabel">Architecture</span>
             <select id="archFilter">
-              <option value="all">All</option>
+              <option value="all" id="archAll">All</option>
               <option value="x64">x64</option>
               <option value="arm64">arm64</option>
             </select>
@@ -79,7 +86,7 @@
     </main>
 
     <footer>
-      <p>
+      <p id="footerText">
         Source code is private. This repository only distributes desktop binaries and update metadata.
       </p>
     </footer>

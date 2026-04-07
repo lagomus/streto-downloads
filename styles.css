@@ -69,6 +69,44 @@ footer {
   animation: fadeUp 520ms ease-out;
 }
 
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.brand-logo {
+  width: min(300px, 72vw);
+  height: auto;
+  display: block;
+}
+
+.lang-switch {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.lang-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.62rem;
+  cursor: pointer;
+}
+
+.lang-btn.active {
+  color: #002233;
+  background: linear-gradient(90deg, var(--accent), #67e8f9);
+  font-weight: 700;
+}
+
 .badge {
   display: inline-block;
   font-family: "IBM Plex Mono", monospace;
@@ -314,6 +352,11 @@ footer {
 @media (max-width: 640px) {
   body {
     padding: 1rem 0.75rem 2rem;
+  }
+
+  .hero-top {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .panel {
