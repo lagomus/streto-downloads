@@ -1,4 +1,7 @@
-const API_URL = "https://api.github.com/repos/streto/streto-downloads/releases";
+const API_URLS = [
+  "https://api.github.com/repos/lagomus/streto-downloads/releases",
+  "https://api.github.com/repos/streto/streto-downloads/releases",
+];
 
 const latestGrid = document.getElementById("latestGrid");
 const releaseList = document.getElementById("releaseList");
@@ -10,6 +13,11 @@ const platformFilter = document.getElementById("platformFilter");
 const archFilter = document.getElementById("archFilter");
 const langEnBtn = document.getElementById("langEn");
 const langEsBtn = document.getElementById("langEs");
+const debugPanel = document.getElementById("debugPanel");
+const debugOutput = document.getElementById("debugOutput");
+
+const DEBUG_MODE = new URLSearchParams(window.location.search).get("debug") === "1";
+const DEBUG_LINES = [];
 
 const I18N = {
   en: {
@@ -93,10 +101,42 @@ const ARCH_ORDER = ["x64", "arm64"];
 
 let cachedReleases = [];
 
+function debugLog(message) {
+  if (!DEBUG_MODE) {
+    return;
+  }
+
+  const line = `[${new Date().toISOString()}] ${message}`;
+  DEBUG_LINES.push(line);
+  if (debugOutput) {
+    debugOutput.textContent = DEBUG_LINES.join("\n");
+  }
+}
+
+function setupDebugPanel() {
+  if (!DEBUG_MODE) {
+    return;
+  }
+
+  if (debugPanel) {
+    debugPanel.hidden = false;
+  }
+
+  debugLog(`Debug mode enabled`);
+  debugLog(`Page URL: ${window.location.href}`);
+  debugLog(`Navigator language: ${navigator.language || "unknown"}`);
+  debugLog(`Navigator languages: ${(navigator.languages || []).join(", ")}`);
+}
+
 function detectLanguage() {
-  const savedLang = localStorage.getItem("streto_downloads_lang");
-  if (savedLang === "en" || savedLang === "es") {
-    return savedLang;
+  try {
+    const savedLang = localStorage.getItem("streto_downloads_lang");
+    if (savedLang === "en" || savedLang === "es") {
+      debugLog(`Language from localStorage: ${savedLang}`);
+      return savedLang;
+    }
+  } catch {
+    // Ignore storage failures and use browser language.
   }
 
   const langs = Array.isArray(navigator.languages) && navigator.languages.length
@@ -105,10 +145,12 @@ function detectLanguage() {
 
   for (const lang of langs) {
     if ((lang || "").toLowerCase().startsWith("es")) {
+      debugLog(`Language detected from browser: es`);
       return "es";
     }
   }
 
+  debugLog(`Language detected from browser: en`);
   return "en";
 }
 
@@ -125,6 +167,7 @@ function setText(id, value) {
 function applyI18n() {
   document.documentElement.lang = currentLang;
   document.title = T.pageTitle;
+  debugLog(`Applying language: ${currentLang}`);
 
   setText("badgeText", T.badgeText);
   setText("heroTitle", T.heroTitle);
@@ -163,7 +206,13 @@ function setLanguage(lang) {
 
   currentLang = lang;
   T = I18N[currentLang] || I18N.en;
-  localStorage.setItem("streto_downloads_lang", currentLang);
+  debugLog(`Language switched manually: ${currentLang}`);
+  try {
+    localStorage.setItem("streto_downloads_lang", currentLang);
+    debugLog(`localStorage updated: streto_downloads_lang=${currentLang}`);
+  } catch {
+    // Ignore storage failures and continue in-memory.
+  }
   applyI18n();
   rerender();
 }
@@ -367,6 +416,7 @@ function renderAll(releases) {
 
 function rerender() {
   const latest = selectLatest(cachedReleases);
+  debugLog(`Rerender called. Cached releases: ${cachedReleases.length}`);
 
   if (!latest) {
     latestReleaseLink.style.display = "none";
@@ -389,15 +439,26 @@ function rerender() {
 
 async function loadReleases() {
   try {
-    const res = await fetch(API_URL, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
+    let releases = null;
+    for (const url of API_URLS) {
+      debugLog(`Trying API URL: ${url}`);
+      const res = await fetch(url, {
+        headers: { Accept: "application/vnd.github+json" },
+      });
 
-    if (!res.ok) {
-      throw new Error(`GitHub API responded with ${res.status}`);
+      debugLog(`API response: ${url} -> ${res.status}`);
+
+      if (!res.ok) {
+        continue;
+      }
+
+      releases = await res.json();
+      if (Array.isArray(releases)) {
+        debugLog(`Loaded releases from ${url}. Count: ${releases.length}`);
+        break;
+      }
     }
 
-    const releases = await res.json();
     if (!Array.isArray(releases) || releases.length === 0) {
       statusEl.textContent = T.noReleasesYet;
       latestReleaseLink.style.display = "none";
@@ -409,6 +470,7 @@ async function loadReleases() {
     rerender();
   } catch (err) {
     console.error(err);
+    debugLog(`Load error: ${err instanceof Error ? err.message : String(err)}`);
     statusEl.textContent = T.unableToLoad;
     latestReleaseLink.style.display = "none";
     latestGrid.innerHTML = `<div class="empty">${T.failedToLoad}</div>`;
@@ -426,5 +488,6 @@ if (langEsBtn) {
   langEsBtn.addEventListener("click", () => setLanguage("es"));
 }
 
+setupDebugPanel();
 applyI18n();
 loadReleases();

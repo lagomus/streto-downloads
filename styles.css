@@ -78,7 +78,10 @@ footer {
 }
 
 .brand-logo {
-  width: min(300px, 72vw);
+  width: min(240px, 60vw);
+  max-width: 240px;
+  max-height: 64px;
+  object-fit: contain;
   height: auto;
   display: block;
 }
@@ -309,6 +312,24 @@ main {
   border-radius: 12px;
   color: var(--muted);
   padding: 1rem;
+}
+
+.debug-panel {
+  margin-top: 1rem;
+}
+
+#debugOutput {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem;
 }
 
 footer {
